@@ -8,6 +8,8 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.io.FileHandler;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class AddProductToCart {
   private WebDriver driver;
   Actions actions;
+  private WebDriverWait wait;
 
   @RegisterExtension
   TestStatus status = new TestStatus();
@@ -32,9 +35,11 @@ public class AddProductToCart {
     driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
     driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 
-    driver.navigate().to("https://fakestore.testelka.pl/product/fuerteventura-sotavento/");
+    driver.navigate().to("https://fakestore.testelka.pl/product-category/windsurfing/");
 
     actions = new Actions(driver);
+
+    wait = new WebDriverWait(driver, 10);
   }
 
   @AfterEach
@@ -47,23 +52,41 @@ public class AddProductToCart {
 
   @Test
   public void addOneTripToCartTest() {
-    WebElement submitButton = driver.findElement(By.cssSelector("button[name='add-to-cart']"));
+    WebElement demoInfo = driver.findElement(By.cssSelector("a[class='woocommerce-store-notice__dismiss-link']"));
+    actions.click(demoInfo).build().perform();
+
+    WebElement submitButton = driver.findElement(By.cssSelector("a[href='?add-to-cart=393']"));
     ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", submitButton);
     actions.click(submitButton).build().perform();
-    WebElement alert = driver.findElement(By.cssSelector("div[class='woocommerce-message']"));
-    Assertions.assertEquals("Zobacz koszyk\n" + "“Fuerteventura – Sotavento” został dodany do koszyka.", alert.getText(), "Product has not been added to the cart.");
+    WebElement seeCart = driver.findElement(By.cssSelector("a[class='added_to_cart wc-forward']"));
+    Assertions.assertTrue(seeCart.isDisplayed(), "Products has not been added to the cart.");
   }
 
   @Test
-  public void addMoreThan10TripsToCartTest() {
-    WebElement quantity = driver.findElement(By.cssSelector("input[class='input-text qty text']"));
-    ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", quantity);
-    actions.sendKeys(quantity, Keys.BACK_SPACE).sendKeys(quantity, "11").build().perform();
-    WebElement submitButton = driver.findElement(By.cssSelector("button[name='add-to-cart']"));
-    ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", submitButton);
-    actions.click(submitButton).build().perform();
-    WebElement alert = driver.findElement(By.cssSelector("div[class='woocommerce-message']"));
-    Assertions.assertEquals("Zobacz koszyk\n" + "11 × “Fuerteventura – Sotavento” zostało dodanych do koszyka.", alert.getText(), "Products have not been added to the cart.");
+  public void addMoreThan10DifferentTripsToCartTest() {
+    WebElement demoInfo = driver.findElement(By.cssSelector("a[class='woocommerce-store-notice__dismiss-link']"));
+    actions.click(demoInfo).build().perform();
+
+    WebElement submitButton1 = driver.findElement(By.cssSelector("a[href='?add-to-cart=386']"));
+    WebElement submitButton2 = driver.findElement(By.cssSelector("a[href='?add-to-cart=393']"));
+    WebElement submitButton3 = driver.findElement(By.cssSelector("a[href='?add-to-cart=391']"));
+    WebElement submitButton4 = driver.findElement(By.cssSelector("a[href='?add-to-cart=50']"));
+    WebElement submitButton5 = driver.findElement(By.cssSelector("a[href='?add-to-cart=389']"));
+    ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", submitButton5);
+    actions.click(submitButton1).build().perform();
+    actions.click(submitButton1).build().perform();
+    actions.click(submitButton2).build().perform();
+    actions.click(submitButton2).build().perform();
+    actions.click(submitButton3).build().perform();
+    actions.click(submitButton3).build().perform();
+    actions.click(submitButton4).build().perform();
+    actions.click(submitButton4).build().perform();
+    actions.click(submitButton5).build().perform();
+    actions.click(submitButton5).build().perform();
+    By price = By.cssSelector("span[class='woocommerce-Price-amount amount']");
+    wait.until(ExpectedConditions.textToBe(price, "36 998,00 zł"));
+    String priceText = driver.findElement(price).getText();
+    Assertions.assertEquals("36 998,00 zł", priceText, "Products have not been added to the cart.");
   }
 
   private String takeScreenShot(TestInfo info) throws IOException {

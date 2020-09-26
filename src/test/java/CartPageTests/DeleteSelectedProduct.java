@@ -42,7 +42,7 @@ public class DeleteSelectedProduct {
   }
 
   @Test
-  public void deleteProductInCart() {
+  public void deleteProductInCartTest() {
     WebElement demoInfo = driver.findElement(By.cssSelector("a[class='woocommerce-store-notice__dismiss-link']"));
     actions.click(demoInfo).build().perform();
 

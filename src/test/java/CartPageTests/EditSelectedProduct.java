@@ -42,7 +42,7 @@ public class EditSelectedProduct {
   }
 
   @Test
-  public void changeAmountOfSelectedTripInCart() {
+  public void changeAmountOfSelectedTripInCartTest() {
     WebElement demoInfo = driver.findElement(By.cssSelector("a[class='woocommerce-store-notice__dismiss-link']"));
     actions.click(demoInfo).build().perform();
 

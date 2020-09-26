@@ -8,7 +8,6 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.io.FileHandler;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
@@ -71,28 +70,6 @@ public class EditSelectedProduct {
     }
     driver.quit();
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   private String takeScreenShot(TestInfo info) throws IOException {
     File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);

@@ -61,7 +61,7 @@ public class PaymentErrorsMessages {
   }
 
   @Test
-  public void tryToBuyWithoutCardDate() {
+  public void tryToBuyWithoutCardDateTest() {
     chooseProductToBuy();
     beforeBuyProduct();
     driver.switchTo().frame(0);
@@ -78,7 +78,7 @@ public class PaymentErrorsMessages {
   }
 
   @Test
-  public void tryToBuyWithCardDatExpired() {
+  public void tryToBuyWithCardDatExpiredTest() {
     chooseProductToBuy();
     beforeBuyProduct();
     driver.switchTo().frame(0);
@@ -100,7 +100,7 @@ public class PaymentErrorsMessages {
   }
 
   @Test
-  public void tryToBuyWithMissingPhoneNumber() {
+  public void tryToBuyWithMissingPhoneNumberTest() {
     chooseProductToBuy();
     beforeBuyProduct();
 
@@ -131,7 +131,7 @@ public class PaymentErrorsMessages {
   }
 
   @Test
-  public void tryToBuyWithoutRegulationsAcceptance() {
+  public void tryToBuyWithoutRegulationsAcceptanceTest() {
     chooseProductToBuy();
     beforeBuyProduct();
 

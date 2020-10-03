@@ -1,4 +1,4 @@
-package CategoriesPageTests;
+package tests.categoriesPageTests;
 
 import TestHelpers.TestStatus;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -33,7 +33,6 @@ public class AddProductToCart {
     driver.manage().window().setSize(new Dimension(1295, 730));
     driver.manage().window().setPosition(new Point(10, 40));
     driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
-    driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 
     driver.navigate().to("https://fakestore.testelka.pl/product-category/windsurfing/");
 

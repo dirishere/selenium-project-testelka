@@ -1,6 +1,5 @@
-package OrdersPageTests;
+package tests.ordersPageTests;
 
-import PaymentsTests.PaymentAsLoggedUser;
 import TestHelpers.TestStatus;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.lang3.RandomStringUtils;

@@ -1,4 +1,4 @@
-package OrdersPageTests;
+package tests.ordersPageTests;
 
 import TestHelpers.TestStatus;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -35,7 +35,6 @@ public class OrderSummaryView {
     driver.manage().window().setSize(new Dimension(1295, 730));
     driver.manage().window().setPosition(new Point(10, 40));
     driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
-    driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 
     actions = new Actions(driver);
 

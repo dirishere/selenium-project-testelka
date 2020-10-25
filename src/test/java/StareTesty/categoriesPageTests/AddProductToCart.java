@@ -1,4 +1,4 @@
-package tests.categoriesPageTests;
+package StareTesty.categoriesPageTests;
 
 import TestHelpers.TestStatus;
 import io.github.bonigarcia.wdm.WebDriverManager;

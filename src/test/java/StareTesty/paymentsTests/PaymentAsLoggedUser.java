@@ -1,4 +1,4 @@
-package tests.paymentsTests;
+package StareTesty.paymentsTests;
 
 import TestHelpers.TestStatus;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
-public class CreateAccountAndPayment {
+public class PaymentAsLoggedUser {
   private WebDriver driver;
   Actions actions;
   private WebDriverWait wait;
@@ -36,8 +36,6 @@ public class CreateAccountAndPayment {
     driver.manage().window().setPosition(new Point(10, 40));
     driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
 
-    driver.navigate().to("https://fakestore.testelka.pl/product-category/windsurfing/");
-
     actions = new Actions(driver);
 
     wait = new WebDriverWait(driver, 10);
@@ -52,7 +50,13 @@ public class CreateAccountAndPayment {
   }
 
   @Test
-  public void buyAndCreateAccountTest() {
+  public void buyAsLoggedUserTest() {
+    String generatedString = RandomStringUtils.random(10, true, true);
+    String login = "daria.testerska" + generatedString + "@aa.bb";
+    String password = generatedString;
+    createAccountAndLogin(login, password);
+
+    driver.navigate().to("https://fakestore.testelka.pl/product-category/windsurfing/");
     chooseProductToBuy();
     beforeBuyProduct();
 
@@ -72,20 +76,27 @@ public class CreateAccountAndPayment {
 
     driver.switchTo().defaultContent();
 
-    String generatedString = RandomStringUtils.random(10, true, true);
-    String email = "daria.testerska" + generatedString + "@aa.bb";
-
-    fillOutRegistrationData("Daria", "Testerska", email,
-            "Testerska 66", "85666", "Bydgoszcz", "000000666");
+    fillOutRegistrationData("Daria", "Testerska", "Testerska 66", "85666",
+            "Bydgoszcz", "000000666");
 
     By checkBox = By.cssSelector("input[id='terms']");
     driver.findElement(checkBox).click();
 
-    By createAccountCheckBox = By.cssSelector("input[id='createaccount']");
-    driver.findElement(createAccountCheckBox).click();
-    driver.findElement(By.cssSelector("input[name='account_password']")).sendKeys(generatedString);
+    submit();
+  }
 
-    submit(email);
+  private void createAccountAndLogin(String login, String password) {
+    driver.navigate().to("https://fakestore.testelka.pl/moje-konto/");
+    WebElement demoInfo = driver.findElement(By.cssSelector("a[class='woocommerce-store-notice__dismiss-link']"));
+    actions.click(demoInfo).build().perform();
+
+    driver.findElement(By.cssSelector("input[id='reg_email']")).sendKeys(login);
+    driver.findElement(By.cssSelector("input[id='reg_password']")).sendKeys(password);
+    driver.findElement(By.cssSelector("button[name='register']")).click();
+
+    String expectedEntryTitle = "Moje konto";
+    String actualEntryTitle = driver.findElement(By.cssSelector("h1[class='entry-title']")).getText();
+    Assertions.assertEquals(actualEntryTitle, expectedEntryTitle,"Logowanie nie było poprawne.");
   }
 
   private void beforeBuyProduct() {
@@ -98,9 +109,6 @@ public class CreateAccountAndPayment {
   }
 
   private void chooseProductToBuy() {
-    WebElement demoInfo = driver.findElement(By.cssSelector("a[class='woocommerce-store-notice__dismiss-link']"));
-    actions.click(demoInfo).build().perform();
-
     WebElement submitButton = driver.findElement(By.cssSelector("a[href='?add-to-cart=393']"));
     ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", submitButton);
     actions.click(submitButton).build().perform();
@@ -108,22 +116,19 @@ public class CreateAccountAndPayment {
     Assertions.assertTrue(seeCart.isDisplayed(), "Products has not been added to the cart.");
   }
 
-  private void submit(String login) {
+  private void submit() {
     By orderButton = By.cssSelector("button[id='place_order']");
     driver.findElement(orderButton).click();
     By pageTitle = By.cssSelector("h1[class='entry-title']");
     wait.until(ExpectedConditions.textToBe(pageTitle, "Zamówienie otrzymane"));
-    By activeUser = By.cssSelector("p[class='woocommerce-customer-details--email']");
-    Assertions.assertEquals(driver.findElement(activeUser).getText(), login);
   }
 
-  private void fillOutRegistrationData(String firstName, String lastName, String email, String street, String postCode, String city, String mobileNumber) {
+  private void fillOutRegistrationData(String firstName, String lastName, String street, String postCode, String city, String mobileNumber) {
     driver.findElement(By.cssSelector("input[name='billing_first_name']")).sendKeys(firstName);
     driver.findElement(By.cssSelector("input[name='billing_last_name']")).sendKeys(lastName);
     WebElement countrySelectionDropdown = driver.findElement(By.id("billing_country"));
     Select country = new Select(countrySelectionDropdown);
     country.selectByValue("PL");
-    driver.findElement(By.cssSelector("input[name='billing_email']")).sendKeys(email);
     driver.findElement(By.cssSelector("input[name='billing_address_1']")).sendKeys(street);
     driver.findElement(By.cssSelector("input[name='billing_postcode']")).sendKeys(postCode);
     driver.findElement(By.cssSelector("input[name='billing_city']")).sendKeys(city);

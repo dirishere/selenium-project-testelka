@@ -1,4 +1,4 @@
-package tests.cartPageTests;
+package StareTesty.productPageTests;
 
 import TestHelpers.TestStatus;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -8,7 +8,6 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.io.FileHandler;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,10 +15,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
-public class EditSelectedProduct {
+public class AddProductToCart {
   private WebDriver driver;
   Actions actions;
-  private WebDriverWait wait;
 
   @RegisterExtension
   TestStatus status = new TestStatus();
@@ -36,30 +34,6 @@ public class EditSelectedProduct {
     driver.navigate().to("https://fakestore.testelka.pl/product/fuerteventura-sotavento/");
 
     actions = new Actions(driver);
-
-    wait = new WebDriverWait(driver, 10);
-  }
-
-  @Test
-  public void changeAmountOfSelectedTripInCartTest() {
-    WebElement demoInfo = driver.findElement(By.cssSelector("a[class='woocommerce-store-notice__dismiss-link']"));
-    actions.click(demoInfo).build().perform();
-
-    WebElement submitButton = driver.findElement(By.cssSelector("button[name='add-to-cart']"));
-    ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", submitButton);
-    actions.click(submitButton).build().perform();
-
-    driver.navigate().to("https://fakestore.testelka.pl/koszyk/");
-    By amount = By.cssSelector("input[type='number']");
-    WebElement amountInput = driver.findElement(amount);
-    Assertions.assertEquals("1", amountInput.getAttribute("value"), "Amount should be equals 1.");
-
-    amountInput.sendKeys(Keys.DELETE);
-    amountInput.sendKeys("5");
-    WebElement updateCart = driver.findElement(By.cssSelector("button[type='submit']"));
-    ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", updateCart);
-    actions.click(updateCart);
-    Assertions.assertEquals("5", amountInput.getAttribute("value"), "Amount should be equals 5.");
   }
 
   @AfterEach
@@ -68,6 +42,33 @@ public class EditSelectedProduct {
       System.out.println("Test screenshot is available at: " + takeScreenShot(info));
     }
     driver.quit();
+  }
+
+  @Test
+  public void addOneTripToCartTest() {
+    WebElement demoInfo = driver.findElement(By.cssSelector("a[class='woocommerce-store-notice__dismiss-link']"));
+    actions.click(demoInfo).build().perform();
+
+    WebElement submitButton = driver.findElement(By.cssSelector("button[name='add-to-cart']"));
+    ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", submitButton);
+    actions.click(submitButton).build().perform();
+    WebElement alert = driver.findElement(By.cssSelector("div[class='woocommerce-message']"));
+    Assertions.assertEquals("Zobacz koszyk\n" + "“Fuerteventura – Sotavento” został dodany do koszyka.", alert.getText(), "Product has not been added to the cart.");
+  }
+
+  @Test
+  public void addMoreThan10TripsToCartTest() {
+    WebElement demoInfo = driver.findElement(By.cssSelector("a[class='woocommerce-store-notice__dismiss-link']"));
+    actions.click(demoInfo).build().perform();
+
+    WebElement quantity = driver.findElement(By.cssSelector("input[class='input-text qty text']"));
+    ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", quantity);
+    actions.sendKeys(quantity, Keys.BACK_SPACE).sendKeys(quantity, "11").build().perform();
+    WebElement submitButton = driver.findElement(By.cssSelector("button[name='add-to-cart']"));
+    ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", submitButton);
+    actions.click(submitButton).build().perform();
+    WebElement alert = driver.findElement(By.cssSelector("div[class='woocommerce-message']"));
+    Assertions.assertEquals("Zobacz koszyk\n" + "11 × “Fuerteventura – Sotavento” zostało dodanych do koszyka.", alert.getText(), "Products have not been added to the cart.");
   }
 
   private String takeScreenShot(TestInfo info) throws IOException {

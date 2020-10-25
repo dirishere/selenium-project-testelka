@@ -1,4 +1,4 @@
-package tests.paymentsTests;
+package StareTesty.ordersPageTests;
 
 import TestHelpers.TestStatus;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
-public class PaymentAsLoggedUser {
+public class OrderSummaryView {
   private WebDriver driver;
   Actions actions;
   private WebDriverWait wait;
@@ -50,6 +50,26 @@ public class PaymentAsLoggedUser {
   }
 
   @Test
+  public void ordersSummaryViewTest() {
+    buyAsLoggedUserTest();
+
+    WebElement orderNumber = driver.findElement(By.cssSelector("li[class='woocommerce-order-overview__order order']"));
+    WebElement orderDate = driver.findElement(By.cssSelector("li[class='woocommerce-order-overview__date date']"));
+    WebElement orderPrice = driver.findElement(By.cssSelector("span[class='woocommerce-Price-amount amount']"));
+    WebElement paymentMethod = driver.findElement(By.cssSelector("li[class='woocommerce-order-overview__payment-method method']"));
+    WebElement productName = driver.findElement(By.cssSelector("td[class='woocommerce-table__product-name product-name']"));
+    WebElement quantity = driver.findElement(By.cssSelector("strong[class='product-quantity']"));
+
+    Assertions.assertAll(
+            () -> Assertions.assertTrue(orderNumber.isDisplayed()),
+            () -> Assertions.assertTrue(orderDate.isDisplayed()),
+            () -> Assertions.assertTrue(orderPrice.isDisplayed()),
+            () -> Assertions.assertTrue(paymentMethod.isDisplayed()),
+            () -> Assertions.assertTrue(productName.isDisplayed()),
+            () -> Assertions.assertTrue(quantity.isDisplayed())
+    );
+  }
+
   public void buyAsLoggedUserTest() {
     String generatedString = RandomStringUtils.random(10, true, true);
     String login = "daria.testerska" + generatedString + "@aa.bb";
@@ -143,4 +163,5 @@ public class PaymentAsLoggedUser {
     FileHandler.copy(screenshot, new File(path));
     return path;
   }
+
 }

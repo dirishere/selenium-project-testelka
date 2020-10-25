@@ -1,8 +1,7 @@
-package tests.ordersPageTests;
+package StareTesty.paymentsTests;
 
 import TestHelpers.TestStatus;
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openqa.selenium.*;
@@ -19,7 +18,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
-public class OrderHistoryView {
+public class PaymentAsUnknownUser {
   private WebDriver driver;
   Actions actions;
   private WebDriverWait wait;
@@ -35,7 +34,8 @@ public class OrderHistoryView {
     driver.manage().window().setSize(new Dimension(1295, 730));
     driver.manage().window().setPosition(new Point(10, 40));
     driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
-    driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+
+    driver.navigate().to("https://fakestore.testelka.pl/product-category/windsurfing/");
 
     actions = new Actions(driver);
 
@@ -51,26 +51,7 @@ public class OrderHistoryView {
   }
 
   @Test
-  public void ordersHistoryViewTest() {
-    buyAsLoggedUserTest();
-    WebElement orderNumber = driver.findElement(By.cssSelector("li[class='woocommerce-order-overview__order order']"));
-    String orderNumberText = orderNumber.getText().substring(18, 22);
-    WebElement myAccount = driver.findElement(By.cssSelector("li[id='menu-item-201']"));
-    myAccount.click();
-    WebElement myOrders = driver.findElement(By.cssSelector("li[class='woocommerce-MyAccount-navigation-link woocommerce-MyAccount-navigation-link--orders']"));
-    myOrders.click();
-    WebElement orders = driver.findElement(By.cssSelector("td[class='woocommerce-orders-table__cell woocommerce-orders-table__cell-order-number']"));
-    String ordersText = orders.getText().substring(1);
-    Assertions.assertTrue(ordersText.equalsIgnoreCase(orderNumberText), "Table doesn't contain order number: " + orderNumberText + ", because contains " + ordersText);
-  }
-
-  public void buyAsLoggedUserTest() {
-    String generatedString = RandomStringUtils.random(10, true, true);
-    String login = "daria.testerska" + generatedString + "@aa.bb";
-    String password = generatedString;
-    createAccountAndLogin(login, password);
-
-    driver.navigate().to("https://fakestore.testelka.pl/product-category/windsurfing/");
+  public void buyAsUnknownUserTest() {
     chooseProductToBuy();
     beforeBuyProduct();
 
@@ -90,27 +71,13 @@ public class OrderHistoryView {
 
     driver.switchTo().defaultContent();
 
-    fillOutRegistrationData("Daria", "Testerska", "Testerska 66", "85666",
-            "Bydgoszcz", "000000666");
+    fillOutRegistrationData("Daria", "Testerska", "daria.testerska@aa.bb",
+            "Testerska 66", "85666", "Bydgoszcz", "000000666");
 
     By checkBox = By.cssSelector("input[id='terms']");
     driver.findElement(checkBox).click();
 
     submit();
-  }
-
-  private void createAccountAndLogin(String login, String password) {
-    driver.navigate().to("https://fakestore.testelka.pl/moje-konto/");
-    WebElement demoInfo = driver.findElement(By.cssSelector("a[class='woocommerce-store-notice__dismiss-link']"));
-    actions.click(demoInfo).build().perform();
-
-    driver.findElement(By.cssSelector("input[id='reg_email']")).sendKeys(login);
-    driver.findElement(By.cssSelector("input[id='reg_password']")).sendKeys(password);
-    driver.findElement(By.cssSelector("button[name='register']")).click();
-
-    String expectedEntryTitle = "Moje konto";
-    String actualEntryTitle = driver.findElement(By.cssSelector("h1[class='entry-title']")).getText();
-    Assertions.assertEquals(actualEntryTitle, expectedEntryTitle,"Logowanie nie było poprawne.");
   }
 
   private void beforeBuyProduct() {
@@ -123,6 +90,9 @@ public class OrderHistoryView {
   }
 
   private void chooseProductToBuy() {
+    WebElement demoInfo = driver.findElement(By.cssSelector("a[class='woocommerce-store-notice__dismiss-link']"));
+    actions.click(demoInfo).build().perform();
+
     WebElement submitButton = driver.findElement(By.cssSelector("a[href='?add-to-cart=393']"));
     ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", submitButton);
     actions.click(submitButton).build().perform();
@@ -137,12 +107,13 @@ public class OrderHistoryView {
     wait.until(ExpectedConditions.textToBe(pageTitle, "Zamówienie otrzymane"));
   }
 
-  private void fillOutRegistrationData(String firstName, String lastName, String street, String postCode, String city, String mobileNumber) {
+  private void fillOutRegistrationData(String firstName, String lastName, String email, String street, String postCode, String city, String mobileNumber) {
     driver.findElement(By.cssSelector("input[name='billing_first_name']")).sendKeys(firstName);
     driver.findElement(By.cssSelector("input[name='billing_last_name']")).sendKeys(lastName);
     WebElement countrySelectionDropdown = driver.findElement(By.id("billing_country"));
     Select country = new Select(countrySelectionDropdown);
     country.selectByValue("PL");
+    driver.findElement(By.cssSelector("input[name='billing_email']")).sendKeys(email);
     driver.findElement(By.cssSelector("input[name='billing_address_1']")).sendKeys(street);
     driver.findElement(By.cssSelector("input[name='billing_postcode']")).sendKeys(postCode);
     driver.findElement(By.cssSelector("input[name='billing_city']")).sendKeys(city);

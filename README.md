@@ -1,6 +1,6 @@
 # selenium-testelka
-Regression tests project for fakestore.testelka.pl (online store) as a part of the course "Selenium in Java" (Testelka).
-The purpose of the tests is to confirm that the following requirements are met after each update of the system components.
+Regression StareTesty project for fakestore.testelka.pl (online store) as a part of the course "Selenium in Java" (Testelka).
+The purpose of the StareTesty is to confirm that the following requirements are met after each update of the system components.
 According to the requirements, the process is verified from the moment when the product is added to the cart until the payment is made.
 
 ## Test Requirements:

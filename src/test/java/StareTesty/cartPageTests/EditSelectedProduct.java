@@ -1,4 +1,4 @@
-package tests.cartPageTests;
+package StareTesty.cartPageTests;
 
 import TestHelpers.TestStatus;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
-public class DeleteSelectedProduct {
+public class EditSelectedProduct {
   private WebDriver driver;
   Actions actions;
   private WebDriverWait wait;
@@ -41,7 +41,7 @@ public class DeleteSelectedProduct {
   }
 
   @Test
-  public void deleteProductInCartTest() {
+  public void changeAmountOfSelectedTripInCartTest() {
     WebElement demoInfo = driver.findElement(By.cssSelector("a[class='woocommerce-store-notice__dismiss-link']"));
     actions.click(demoInfo).build().perform();
 
@@ -54,11 +54,12 @@ public class DeleteSelectedProduct {
     WebElement amountInput = driver.findElement(amount);
     Assertions.assertEquals("1", amountInput.getAttribute("value"), "Amount should be equals 1.");
 
-    WebElement removeButton = driver.findElement(By.cssSelector("a[class='remove']"));
-    ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", removeButton);
-    actions.click(removeButton).build().perform();
-    WebElement alert = driver.findElement(By.cssSelector("div[class='woocommerce-message']"));
-    Assertions.assertEquals("Usunięto: „Fuerteventura - Sotavento“. Cofnij?", alert.getText(), "Products have not been deleted from the cart.");
+    amountInput.sendKeys(Keys.DELETE);
+    amountInput.sendKeys("5");
+    WebElement updateCart = driver.findElement(By.cssSelector("button[type='submit']"));
+    ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", updateCart);
+    actions.click(updateCart);
+    Assertions.assertEquals("5", amountInput.getAttribute("value"), "Amount should be equals 5.");
   }
 
   @AfterEach

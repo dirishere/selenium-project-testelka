@@ -1,7 +1,8 @@
-package tests.paymentsTests;
+package StareTesty.paymentsTests;
 
 import TestHelpers.TestStatus;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openqa.selenium.*;
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
-public class PaymentErrorsMessages {
+public class CreateAccountAndPayment {
   private WebDriver driver;
   Actions actions;
   private WebDriverWait wait;
@@ -51,55 +52,7 @@ public class PaymentErrorsMessages {
   }
 
   @Test
-  public void tryToBuyWithoutAllFieldsFilledOutTest() {
-    chooseProductToBuy();
-    beforeBuyProduct();
-
-    String message = "Numer karty jest niekompletny.";
-    submit(message);
-  }
-
-  @Test
-  public void tryToBuyWithoutCardDateTest() {
-    chooseProductToBuy();
-    beforeBuyProduct();
-    driver.switchTo().frame(0);
-    By cardNumberInput = By.cssSelector("input[name='cardnumber']");
-    wait.until(ExpectedConditions.elementToBeClickable(cardNumberInput)).sendKeys("4242424242424242");
-
-    driver.switchTo().defaultContent();
-    driver.switchTo().frame(2);
-    By cardCVCInput = By.cssSelector("input[name='cvc']");
-    wait.until(ExpectedConditions.elementToBeClickable(cardCVCInput)).sendKeys("666");
-
-    String message = "Data ważności karty jest niekompletna.";
-    submitWithOnlyCardPart(message);
-  }
-
-  @Test
-  public void tryToBuyWithCardDatExpiredTest() {
-    chooseProductToBuy();
-    beforeBuyProduct();
-    driver.switchTo().frame(0);
-    By cardNumberInput = By.cssSelector("input[name='cardnumber']");
-    wait.until(ExpectedConditions.elementToBeClickable(cardNumberInput)).sendKeys("4242424242424242");
-
-    driver.switchTo().defaultContent();
-    driver.switchTo().frame(2);
-    By cardCVCInput = By.cssSelector("input[name='cvc']");
-    wait.until(ExpectedConditions.elementToBeClickable(cardCVCInput)).sendKeys("666");
-
-    driver.switchTo().defaultContent();
-    driver.switchTo().frame(1);
-    By cardDateInput = By.cssSelector("input[name='exp-date']");
-    wait.until(ExpectedConditions.elementToBeClickable(cardDateInput)).sendKeys("0101");
-
-    String message = "Rok ważności karty upłynął w przeszłości";
-    submitWithOnlyCardPart(message);
-  }
-
-  @Test
-  public void tryToBuyWithMissingPhoneNumberTest() {
+  public void buyAndCreateAccountTest() {
     chooseProductToBuy();
     beforeBuyProduct();
 
@@ -119,42 +72,20 @@ public class PaymentErrorsMessages {
 
     driver.switchTo().defaultContent();
 
-    fillOutRegistrationData("Daria", "Testerska", "daria.testerska@aa.bb",
-            "Testerska 66", "85666", "Bydgoszcz", null);
+    String generatedString = RandomStringUtils.random(10, true, true);
+    String email = "daria.testerska" + generatedString + "@aa.bb";
+
+    fillOutRegistrationData("Daria", "Testerska", email,
+            "Testerska 66", "85666", "Bydgoszcz", "000000666");
 
     By checkBox = By.cssSelector("input[id='terms']");
     driver.findElement(checkBox).click();
 
-    String message = "Telefon płatnika nie jest poprawnym numerem telefonu.";
-    submit(message);
-  }
+    By createAccountCheckBox = By.cssSelector("input[id='createaccount']");
+    driver.findElement(createAccountCheckBox).click();
+    driver.findElement(By.cssSelector("input[name='account_password']")).sendKeys(generatedString);
 
-  @Test
-  public void tryToBuyWithoutRegulationsAcceptanceTest() {
-    chooseProductToBuy();
-    beforeBuyProduct();
-
-    driver.switchTo().frame(0);
-    By cardNumberInput = By.cssSelector("input[name='cardnumber']");
-    wait.until(ExpectedConditions.elementToBeClickable(cardNumberInput)).sendKeys("4242424242424242");
-
-    driver.switchTo().defaultContent();
-    driver.switchTo().frame(2);
-    By cardCVCInput = By.cssSelector("input[name='cvc']");
-    wait.until(ExpectedConditions.elementToBeClickable(cardCVCInput)).sendKeys("666");
-
-    driver.switchTo().defaultContent();
-    driver.switchTo().frame(1);
-    By cardDateInput = By.cssSelector("input[name='exp-date']");
-    wait.until(ExpectedConditions.elementToBeClickable(cardDateInput)).sendKeys("0125");
-
-    driver.switchTo().defaultContent();
-
-    fillOutRegistrationData("Roman", "Testerski", "romek.tester@aa.bb",
-            "Testerska 68", "81616", "Błędowo", "000000010");
-
-    String message = "Proszę przeczytać i zaakceptować regulamin sklepu aby móc sfinalizować zamówienie.";
-    submit(message);
+    submit(email);
   }
 
   private void beforeBuyProduct() {
@@ -177,23 +108,13 @@ public class PaymentErrorsMessages {
     Assertions.assertTrue(seeCart.isDisplayed(), "Products has not been added to the cart.");
   }
 
-  private void submit(String message) {
+  private void submit(String login) {
     By orderButton = By.cssSelector("button[id='place_order']");
     driver.findElement(orderButton).click();
-    By errorList = By.cssSelector("ul.woocommerce-error");
-    String error = wait.until(ExpectedConditions.presenceOfElementLocated(errorList)).getText();
-    Assertions.assertEquals(message, error, "Bad error message or no message.");
-  }
-
-  private void submitWithOnlyCardPart(String message) {
-    driver.switchTo().defaultContent();
-    WebElement submitButton = driver.findElement(By.cssSelector("button[id='place_order']"));
-    ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", submitButton);
-    actions.click(submitButton).build().perform();
-    ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", driver.findElement(By.cssSelector("label[for='stripe-exp-element']")));
-    wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("ul[class='woocommerce_error woocommerce-error wc-stripe-error']")));
-    WebElement alert = driver.findElement(By.cssSelector("ul[class='woocommerce_error woocommerce-error wc-stripe-error']"));
-    Assertions.assertEquals(message, alert.getText(), "Bad error message or no message.");
+    By pageTitle = By.cssSelector("h1[class='entry-title']");
+    wait.until(ExpectedConditions.textToBe(pageTitle, "Zamówienie otrzymane"));
+    By activeUser = By.cssSelector("p[class='woocommerce-customer-details--email']");
+    Assertions.assertEquals(driver.findElement(activeUser).getText(), login);
   }
 
   private void fillOutRegistrationData(String firstName, String lastName, String email, String street, String postCode, String city, String mobileNumber) {

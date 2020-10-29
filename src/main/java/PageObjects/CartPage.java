@@ -1,7 +1,6 @@
 package PageObjects;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -10,12 +9,14 @@ public class CartPage extends BasePage{
 
   public CartPage(WebDriver driver){
     super(driver); //wywołuje konstruktor klasy nadrzędnej (czyli BasePage)
-    wait = new WebDriverWait(driver, 7);
+    wait = new WebDriverWait(driver, 10);
   }
 
-  private By shopTableLocator = By.cssSelector(".shop_table");
+  private By shopTableLocator = By.cssSelector("form>.shop_table");
   private By productQuantityFieldLocator = By.cssSelector("div.quantity>input");
-  private By cartItemSelector = By.cssSelector(".cart_item");
+  private By cartItemLocator = By.cssSelector(".cart_item");
+  private By updateProductButtonLocator = By.cssSelector("[name='update_cart']");
+  private By loaderLocator = By.cssSelector(".blockOverlay");
   private String removeProductButtonCssSelector = "a[data-product_id='<product_id>']";
 
   public int getProductQuantity(){
@@ -38,10 +39,48 @@ public class CartPage extends BasePage{
 
   public int getNumberOfProducts() {
     waitForShopTable();
-    return driver.findElements(cartItemSelector).size();
+    return driver.findElements(cartItemLocator).size();
   }
 
   private void waitForShopTable() {
     wait.until(ExpectedConditions.presenceOfElementLocated(shopTableLocator));
+  }
+
+  public CartPage changeNumberOfProducts(int quantity) {
+    WebElement amountInput = driver.findElement(productQuantityFieldLocator);
+    amountInput.clear();
+    amountInput.sendKeys(String.valueOf(quantity));
+
+    return new CartPage(driver);
+  }
+
+  public CartPage updateCart() {
+    waitForShopTable();
+    WebElement updateCartButton = driver.findElement(updateProductButtonLocator);
+    wait.until(ExpectedConditions.elementToBeClickable(updateCartButton));
+    updateCartButton.click();
+
+    return new CartPage(driver);
+  }
+
+  public CartPage removeProduct(String productId) {
+    waitForShopTable();
+    By removeProductLocator = By.cssSelector(removeProductButtonCssSelector.replace("<product_id>", productId));
+    WebElement removeButton = driver.findElement(removeProductLocator);
+    removeButton.click();
+    wait.until(ExpectedConditions.invisibilityOfElementLocated(loaderLocator));
+
+    return new CartPage(driver);
+  }
+
+  public boolean isCartEmpty() {
+    int shopTableElements = driver.findElements(shopTableLocator).size();
+    if (shopTableElements == 1){
+      return false;
+    } else if (shopTableElements == 0) {
+      return true;
+    } else {
+      throw new IllegalArgumentException("Wrong number of shop table elements: there can be only one or none.");
+    }
   }
 }

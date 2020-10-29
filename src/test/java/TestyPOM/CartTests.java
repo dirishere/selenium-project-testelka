@@ -5,6 +5,9 @@ import PageObjects.ProductPage;
 import org.junit.jupiter.api.Assertions;
 
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
 
 public class CartTests extends BaseTest{
 
@@ -55,5 +58,23 @@ public class CartTests extends BaseTest{
     int numberOfItems = productPage.header.viewCart().getNumberOfProducts();
 
     Assertions.assertEquals(10, numberOfItems, "Number of items in the cart is not correct. Expected 10, but was: " + numberOfItems);
+  }
+
+  @Test
+  public void changeAmountOfSelectedTripInCartTest() {
+    ProductPage productPage = new ProductPage(driver).goTo(productUrl);
+    productPage.footer.closeDemoNotice();
+    int numberOfItems = productPage.addToCart().viewCart().changeNumberOfProducts(8).updateCart().getProductQuantity();
+
+    Assertions.assertEquals(8, numberOfItems, "Changed number of items in the cart is not correct. Expected 5, but was: " + numberOfItems);
+  }
+
+  @Test
+  public void removeProductInCartTest() {
+    ProductPage productPage = new ProductPage(driver).goTo(productUrl);
+    productPage.footer.closeDemoNotice();
+    boolean isCartEmpty = productPage.addToCart().viewCart().removeProduct(productId).isCartEmpty();
+
+    Assertions.assertTrue(isCartEmpty, "Cart is not empty");
   }
 }

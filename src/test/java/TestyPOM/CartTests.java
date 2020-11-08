@@ -5,9 +5,6 @@ import PageObjects.ProductPage;
 import org.junit.jupiter.api.Assertions;
 
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebElement;
 
 public class CartTests extends BaseTest{
 

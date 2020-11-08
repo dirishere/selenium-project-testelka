@@ -23,7 +23,7 @@ public class ProductPage extends BasePage{
 
   public ProductPage goTo(String productUrl){
     driver.navigate().to(productUrl);
-    return new ProductPage(driver);
+    return this;
   }
 
   public ProductPage addToCart(){
@@ -31,7 +31,7 @@ public class ProductPage extends BasePage{
     ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", addButton);
     addButton.click();
     wait.until(ExpectedConditions.elementToBeClickable(viewCartButtonLocator));
-    return new ProductPage(driver);
+    return this;
   }
 
   public ProductPage addToCart(int productAmount){
@@ -43,7 +43,7 @@ public class ProductPage extends BasePage{
     actions.sendKeys(quantityInput, String.valueOf(productAmount)).build().perform();
     actions.click(submitAddButton).build().perform();
     wait.until(ExpectedConditions.elementToBeClickable(viewCartButtonLocator));
-    return new ProductPage(driver);
+    return this;
   }
 
   public CartPage viewCart(){

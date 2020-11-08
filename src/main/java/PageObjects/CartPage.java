@@ -17,6 +17,7 @@ public class CartPage extends BasePage{
   private By cartItemLocator = By.cssSelector(".cart_item");
   private By updateProductButtonLocator = By.cssSelector("[name='update_cart']");
   private By loaderLocator = By.cssSelector(".blockOverlay");
+  private By checkoutButtonLocator = By.cssSelector(".checkout-button");
   private String removeProductButtonCssSelector = "a[data-product_id='<product_id>']";
 
   public int getProductQuantity(){
@@ -51,7 +52,8 @@ public class CartPage extends BasePage{
     amountInput.clear();
     amountInput.sendKeys(String.valueOf(quantity));
 
-    return new CartPage(driver);
+    //return new CartPage(driver);
+    return this;
   }
 
   public CartPage updateCart() {
@@ -60,7 +62,7 @@ public class CartPage extends BasePage{
     wait.until(ExpectedConditions.elementToBeClickable(updateCartButton));
     updateCartButton.click();
 
-    return new CartPage(driver);
+    return this;
   }
 
   public CartPage removeProduct(String productId) {
@@ -70,7 +72,7 @@ public class CartPage extends BasePage{
     removeButton.click();
     wait.until(ExpectedConditions.invisibilityOfElementLocated(loaderLocator));
 
-    return new CartPage(driver);
+    return this;
   }
 
   public boolean isCartEmpty() {
@@ -82,5 +84,10 @@ public class CartPage extends BasePage{
     } else {
       throw new IllegalArgumentException("Wrong number of shop table elements: there can be only one or none.");
     }
+  }
+
+  public CheckoutPage goToCheckout() {
+    driver.findElement(checkoutButtonLocator).click();
+    return new CheckoutPage(driver);
   }
 }

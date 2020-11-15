@@ -1,4 +1,4 @@
-package TestyPOM;
+package Tests;
 
 import PageObjects.CartPage;
 import PageObjects.CheckoutPage;

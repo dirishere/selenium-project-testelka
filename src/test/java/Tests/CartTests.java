@@ -1,4 +1,4 @@
-package TestyPOM;
+package Tests;
 
 import PageObjects.CategoryPage;
 import PageObjects.ProductPage;

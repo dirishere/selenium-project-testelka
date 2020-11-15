@@ -87,6 +87,7 @@ public class CartPage extends BasePage{
   }
 
   public CheckoutPage goToCheckout() {
+    waitForShopTable();
     driver.findElement(checkoutButtonLocator).click();
     return new CheckoutPage(driver);
   }

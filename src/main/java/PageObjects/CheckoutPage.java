@@ -18,6 +18,12 @@ public class CheckoutPage extends BasePage {
   private By cityFieldLocator = By.cssSelector("#billing_city");
   private By phoneFieldLocator = By.cssSelector("#billing_phone");
   private By emailFieldLocator = By.cssSelector("#billing_email");
+  private By loadingIconLocator = By.cssSelector(".blockOverlay");
+  private By cardNumberFieldLocator = By.cssSelector("[name='cardnumber']");
+  private By expirationDateFieldLocator = By.cssSelector("[name='exp-date']");
+  private By cvcFieldLocator = By.cssSelector("[name='cvc']");
+  private By termsCheckBoxLocator = By.cssSelector("input[id='terms']");
+  private By orderButtonLocator = By.cssSelector("button[id='place_order']");
 
   public CheckoutPage(WebDriver driver) {
     super(driver);
@@ -64,5 +70,40 @@ public class CheckoutPage extends BasePage {
   public CheckoutPage typeEmail(String emailAddress) {
     wait.until(ExpectedConditions.elementToBeClickable(emailFieldLocator)).sendKeys(emailAddress);
     return this;
+  }
+
+  public CheckoutPage typeCardNumber(String cardNumber) {
+    wait.until(ExpectedConditions.invisibilityOfElementLocated(loadingIconLocator));
+    driver.switchTo().frame(0);
+    wait.until(ExpectedConditions.elementToBeClickable(cardNumberFieldLocator)).sendKeys(cardNumber);
+    driver.switchTo().defaultContent();
+    return this;
+  }
+
+  public CheckoutPage typeCardExpirationDate(String expirationDate) {
+    wait.until(ExpectedConditions.invisibilityOfElementLocated(loadingIconLocator));
+    driver.switchTo().frame(1);
+    wait.until(ExpectedConditions.elementToBeClickable(expirationDateFieldLocator)).sendKeys(expirationDate);
+    driver.switchTo().defaultContent();
+    return this;
+  }
+
+  public CheckoutPage typeCvcCode(String cvcCode) {
+    wait.until(ExpectedConditions.invisibilityOfElementLocated(loadingIconLocator));
+    driver.switchTo().frame(2);
+    wait.until(ExpectedConditions.elementToBeClickable(cvcFieldLocator)).sendKeys(cvcCode);
+    driver.switchTo().defaultContent();
+    return this;
+  }
+
+  public CheckoutPage selectAcceptTerms() {
+    wait.until(ExpectedConditions.invisibilityOfElementLocated(loadingIconLocator));
+    driver.findElement(termsCheckBoxLocator).click();
+    return this;
+  }
+
+  public OrderReceivedPage order() {
+    driver.findElement(orderButtonLocator).click();
+    return new OrderReceivedPage(driver);
   }
 }

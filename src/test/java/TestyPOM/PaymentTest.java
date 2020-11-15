@@ -2,7 +2,9 @@ package TestyPOM;
 
 import PageObjects.CartPage;
 import PageObjects.CheckoutPage;
+import PageObjects.OrderReceivedPage;
 import PageObjects.ProductPage;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class PaymentTest extends BaseTest {
@@ -17,7 +19,9 @@ public class PaymentTest extends BaseTest {
   private String city = "Bydgoszcz";
   private String phone = "800800800";
   private String emailAddress = "test@abctest123.pl";
-
+  private String cardNumber = "4242424242424242";
+  private String expirationDate = "0522";
+  private String cvcCode = "666";
 
   @Test
   public void buyWithoutAccountTest(){
@@ -25,7 +29,7 @@ public class PaymentTest extends BaseTest {
     productPage.footer.closeDemoNotice();
     CartPage cartPage = productPage.addToCart().viewCart();
     CheckoutPage checkoutPage = cartPage.goToCheckout();
-    checkoutPage
+    OrderReceivedPage orderReceivedPage = checkoutPage
             .typeName(name)
             .typeLastName(lastName)
             .chooseCountry(countryCode)
@@ -33,6 +37,14 @@ public class PaymentTest extends BaseTest {
             .typePostalCode(postalCode)
             .typeCity(city)
             .typePhone(phone)
-            .typeEmail(emailAddress);
+            .typeEmail(emailAddress)
+            .typeCardNumber(cardNumber)
+            .typeCardExpirationDate(expirationDate)
+            .typeCvcCode(cvcCode)
+            .selectAcceptTerms()
+            .order();
+    boolean isOrderSuccessful = orderReceivedPage.isOrderSuccessful();
+    Assertions.assertTrue(isOrderSuccessful, "No order successful message found.");
+
   }
 }

@@ -10,9 +10,8 @@ According to the requirements, the process is verified from the moment when the 
 4. the user has the possibility to select the number of trips he wants to purchase (product page),
 5. the user can change the amount of the selected trip (single item) in the cart view,
 6. the user can delete the trip in the cart view (the entire item),
-7. the user is informed about errors in the form on the payment page by appropriate messages,
-8. the user has the option to log in to the payment page and make the payment as a logged user,
-9. the user has the option of creating an account on the payment page and making the payment at the same time,
-10. the user has the option to make a purchase without creating an account,
-11. the user who has an account can see his orders history,
-12. the user can see a summary that includes the order number, date, amount, payment method, name and number of products purchased.
+7. the user has the option to make a purchase without creating an account,
+8. the user can see a summary that includes the order number, date, amount, payment method, name and number of products purchased.
+
+## Design Pattern
+Tests were based on a design pattern called Page Object Model (to reduce code duplication and improves test maintenance). 

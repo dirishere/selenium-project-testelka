@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 public class PaymentTest extends BaseTest {
 
-  private String productUrl = "https://fakestore.testelka.pl/product/egipt-el-gouna/";
+  private String productUrl = baseUrl + "/product/egipt-el-gouna/";
 
   private String name = "Daria";
   private String lastName = "Testowa";
@@ -45,6 +45,5 @@ public class PaymentTest extends BaseTest {
             .order();
     boolean isOrderSuccessful = orderReceivedPage.isOrderSuccessful();
     Assertions.assertTrue(isOrderSuccessful, "No order successful message found.");
-
   }
 }

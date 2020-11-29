@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 public class CartTests extends BaseTest{
 
   private String productId = "386";
-  private String productUrl = "https://fakestore.testelka.pl/product/egipt-el-gouna/";
-  private String categoryUrl = "https://fakestore.testelka.pl/product-category/windsurfing/";
+  private String productUrl = baseUrl + "/product/egipt-el-gouna/";
+  private String categoryUrl = baseUrl + "/product-category/windsurfing/";
 
   String[] productPages = {"/egipt-el-gouna/","/wspinaczka-via-ferraty/", "/wspinaczka-island-peak/",
   "/fuerteventura-sotavento/", "/grecja-limnos/", "/windsurfing-w-karpathos/",
@@ -48,7 +48,7 @@ public class CartTests extends BaseTest{
   public void addTenProductsToCartTest(){
     ProductPage productPage = new ProductPage(driver);
     for (String product: productPages) {
-      productPage.goTo("https://fakestore.testelka.pl/product" + product).addToCart();
+      productPage.goTo(baseUrl + "/product" + product).addToCart();
     }
     //productPage.viewCart(); -> viewCart as element of ProductPage (green button)
     //viewCart as element of the page header:

@@ -10,27 +10,25 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class DriverFactory {
-  private String hubURL = "http://localhost:4444/wd/hub";
-
-  public WebDriver create(Browser browserType) throws MalformedURLException {
+  public WebDriver create(Browser browserType, String hubUrl) throws MalformedURLException {
     switch (browserType) {
       case CHROME:
-        return getChromeDriver();
+        return getChromeDriver(hubUrl);
       case FIREFOX:
-        return getFirefoxDriver();
+        return getFirefoxDriver(hubUrl);
       default:
         throw new IllegalArgumentException("It seems that provided browser doesn't exit");
     }
   }
 
-  private WebDriver getChromeDriver() throws MalformedURLException {
+  private WebDriver getChromeDriver(String hubUrl) throws MalformedURLException {
     ChromeOptions options = new ChromeOptions();
     options.setCapability(CapabilityType.VERSION, "66");
-    return new RemoteWebDriver(new URL(hubURL), options);
+    return new RemoteWebDriver(new URL(hubUrl), options);
   }
 
-  private WebDriver getFirefoxDriver() throws MalformedURLException {
+  private WebDriver getFirefoxDriver(String hubUrl) throws MalformedURLException {
     FirefoxOptions options = new FirefoxOptions();
-    return new RemoteWebDriver(new URL(hubURL), options);
+    return new RemoteWebDriver(new URL(hubUrl), options);
   }
 }

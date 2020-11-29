@@ -1,0 +1,1 @@
+java -jar -Dwebdriver.chrome.driver="C:\{path}\src\main\resources\chromedriver.exe" selenium-server-standalone-3.141.59.jar -role node -nodeConfig nodeconfig.json

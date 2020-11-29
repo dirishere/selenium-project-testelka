@@ -1,20 +1,22 @@
 package Tests;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
+import Drivers.Browser;
+import Drivers.DriverFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
 
+import java.net.MalformedURLException;
 import java.util.concurrent.TimeUnit;
 
 public abstract class BaseTest {
   protected WebDriver driver;
 
   @BeforeEach
-  public void testSetup() {
-    WebDriverManager.chromedriver().setup();
-    driver = new ChromeDriver();
+  public void testSetup() throws MalformedURLException {
+    DriverFactory driverFactory = new DriverFactory();
+    driver = driverFactory.create(Browser.CHROME);
+
     driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
 
     driver.manage().window().setSize(new Dimension(1290, 730));

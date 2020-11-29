@@ -13,22 +13,22 @@ According to the requirements, the process is verified from the moment when the 
 7. the user has the option to make a purchase without creating an account,
 8. the user can see a summary that includes the order number, date, amount, payment method, name and number of products purchased.
 
-##Design Pattern
+## Design Pattern
 Tests were based on a design pattern called Page Object Model (to reduce code duplication and improves test maintenance).
 
-##Selenium Grid - configuration
+## Selenium Grid - configuration
 For more information visit https://www.selenium.dev/documentation/en/grid/grid_3/setting_up_your_own_grid/
-###hub
+### hub
 1. Download selenium-server-standalone (3.141.59) from https://www.selenium.dev/downloads/.
 2. Use command:
 ``java -jar selenium-server-standalone-3.141.59.jar -role hub``
 Selenium grid default port: ``4444``.
 Nodes should register to: ``http://{node_address}:4444/grid/register``.
 Clients should register to: ``http://{client_address}:4444/wd/hub``.
-###node
+### node
 1. Register new node, use command:
 ``java -jar selenium-server-standalone-3.141.59.jar -role node -hub http://{node_address}:4444/grid/register``
-###configuration file (example)
+### configuration file (example)
 1. You can create configuration file (``resources/hubconfig.json``, ``resources/nodeconfig.json``) and use it during new node registration.
 2. To register new hub with configuration file, use command (or starthub.bat):
 ``java -jar selenium-server-standalone-3.141.59.jar -role hube -hubConfig hubconfig.json``

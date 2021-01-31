@@ -2,5 +2,6 @@ package Drivers;
 
 public enum Browser {
   CHROME,
-  FIREFOX
+  FIREFOX,
+  SAFARI
 }

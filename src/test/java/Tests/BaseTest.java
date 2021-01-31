@@ -1,37 +1,24 @@
 package Tests;
 
-import Drivers.Browser;
 import Drivers.DriverFactory;
+import Utils.ConfigurationManager;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.openqa.selenium.*;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Point;
+import org.openqa.selenium.WebDriver;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 public abstract class BaseTest {
   protected WebDriver driver;
-  protected static String baseUrl;
-  private static String hubUrl;
-  private static String browser;
-
-  @BeforeAll
-  public static void loadConfig() throws IOException {
-    Properties properties = new Properties();
-    properties.load(new FileInputStream("src/configs/Configurations.properties"));
-    hubUrl = properties.getProperty("hubUrl");
-    baseUrl = properties.getProperty("baseUrl");
-    browser = properties.getProperty("browser");
-  }
+  protected String baseUrl = ConfigurationManager.getInstance().getBaseUrl();
 
   @BeforeEach
   public void testSetup() throws MalformedURLException {
     DriverFactory driverFactory = new DriverFactory();
-    driver = driverFactory.create(Browser.valueOf(browser), hubUrl);
+    driver = driverFactory.create();
 
     driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
 

@@ -30,7 +30,7 @@ public class DriverFactory {
 
   private WebDriver getChromeDriver(ConfigurationReader configuration) {
     ChromeOptions options = new ChromeOptions();
-    options.setCapability(CapabilityType.VERSION, "66");
+    options.setCapability(CapabilityType.VERSION, "88");
     return getDriver(options, configuration);
   }
 

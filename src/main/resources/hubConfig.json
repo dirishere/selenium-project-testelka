@@ -1,5 +1,5 @@
 {
-  "host":  "localhost",
+  "host":  "darias-air.home",
   "maxSession": 5,
   "port": 4444,
   "cleanupCycle": 5000,
@@ -9,5 +9,5 @@
   "prioritizer": null,
   "capabilityMatcher": "org.openqa.grid.internal.utils.DefaultCapabilityMatcher",
   "throwOnCapabilityNotPresent": true,
-  "nodePolling": 180000,
-  "platform": "WINDOWS"}
+  "nodePolling": 180000
+}

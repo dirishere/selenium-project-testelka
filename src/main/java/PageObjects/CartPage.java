@@ -1,8 +1,14 @@
 package PageObjects;
 
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.CacheLookup;
+import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.List;
 
 public class CartPage extends BasePage{
   private WebDriverWait wait;
@@ -12,17 +18,19 @@ public class CartPage extends BasePage{
     wait = new WebDriverWait(driver, 10);
   }
 
-  private By shopTableLocator = By.cssSelector("form>.shop_table");
-  private By productQuantityFieldLocator = By.cssSelector("div.quantity>input");
-  private By cartItemLocator = By.cssSelector(".cart_item");
-  private By updateProductButtonLocator = By.cssSelector("[name='update_cart']");
-  private By loaderLocator = By.cssSelector(".blockOverlay");
-  private By checkoutButtonLocator = By.cssSelector(".checkout-button");
+  @FindBy(css="form>.shop_table") @CacheLookup private WebElement shopTable;
+  @FindBy(css="form>.shop_table") @CacheLookup private List<WebElement> shopTables;
+  @FindBy(css="div.quantity>input") @CacheLookup private WebElement productQuantityField;
+  @FindBy(css=".cart_item") @CacheLookup private List<WebElement> cartItems;
+  @FindBy(css="[name='update_cart']") @CacheLookup private WebElement updateProductButton;
+  @FindBy(css=".checkout-button") @CacheLookup private WebElement checkoutButton;
+
   private String removeProductButtonCssSelector = "a[data-product_id='<product_id>']";
+  private By loaderLocator = By.cssSelector(".blockOverlay");
 
   public int getProductQuantity(){
     waitForShopTable();
-    return Integer.parseInt(driver.findElement(productQuantityFieldLocator).getAttribute("value"));
+    return Integer.parseInt(productQuantityField.getAttribute("value"));
   }
 
   public boolean isProductInCart(String productId) {
@@ -40,17 +48,16 @@ public class CartPage extends BasePage{
 
   public int getNumberOfProducts() {
     waitForShopTable();
-    return driver.findElements(cartItemLocator).size();
+    return cartItems.size();
   }
 
   private void waitForShopTable() {
-    wait.until(ExpectedConditions.presenceOfElementLocated(shopTableLocator));
+    wait.until(ExpectedConditions.visibilityOf(shopTable));
   }
 
   public CartPage changeNumberOfProducts(int quantity) {
-    WebElement amountInput = driver.findElement(productQuantityFieldLocator);
-    amountInput.clear();
-    amountInput.sendKeys(String.valueOf(quantity));
+    productQuantityField.clear();
+    productQuantityField.sendKeys(String.valueOf(quantity));
 
     //return new CartPage(driver);
     return this;
@@ -58,9 +65,8 @@ public class CartPage extends BasePage{
 
   public CartPage updateCart() {
     waitForShopTable();
-    WebElement updateCartButton = driver.findElement(updateProductButtonLocator);
-    wait.until(ExpectedConditions.elementToBeClickable(updateCartButton));
-    updateCartButton.click();
+    wait.until(ExpectedConditions.elementToBeClickable(updateProductButton));
+    updateProductButton.click();
 
     return this;
   }
@@ -76,7 +82,7 @@ public class CartPage extends BasePage{
   }
 
   public boolean isCartEmpty() {
-    int shopTableElements = driver.findElements(shopTableLocator).size();
+    int shopTableElements = shopTables.size();
     if (shopTableElements == 1){
       return false;
     } else if (shopTableElements == 0) {
@@ -88,7 +94,7 @@ public class CartPage extends BasePage{
 
   public CheckoutPage goToCheckout() {
     waitForShopTable();
-    driver.findElement(checkoutButtonLocator).click();
+    checkoutButton.click();
     return new CheckoutPage(driver);
   }
 }
